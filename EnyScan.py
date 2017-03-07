@@ -30,8 +30,9 @@ def Escaner():
 		
 		if Sock.connect_ex((Ip, Puerto[x])):
 
-			if Puerto[x] == 53 or Puerto[x] == 67 or Puerto[x] == 68 or Puerto[x] == 69 or Puerto[x] == 123\
-			or Puerto[x] == 161 or Puerto[x] == 500 or Puerto[x] == 514 or Puerto[x] == 520:
+			if Puerto[x] == 53 or Puerto[x] == 67 or Puerto[x] == 68 or Puerto[x] == 69\
+			or Puerto[x] == 123 or Puerto[x] == 161 or Puerto[x] == 162 or Puerto[x] == 500\
+			or Puerto[x] == 514 or Puerto[x] == 520:
 				
 				print("\t [X] El Puerto " + str(Puerto[x]) + "/udp Está Cerrado.")
 			
