@@ -2,7 +2,7 @@
 ## Escáner de Puertos Con Python.
 
 ### By: LawlietJH
-###       v1.0.5
+###       v1.0.6
 
 - - -
 
@@ -10,4 +10,6 @@
 
     Indica La IP a Escanear y Se Mostrarán Los Puertos Abiertos y Cerrados.
 
-__Hay un Total de 90 puertos para analisar, de 1 a 1337.__
+
+
+__Hay un Total de 90 puertos para analizar, de 1 a 1337.__
