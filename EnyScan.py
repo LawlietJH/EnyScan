@@ -1,11 +1,12 @@
 # Python 3
 # By: LawlietJH
-# 		v1.0.4
+# 		v1.0.5
 import socket
 
 def Escaner():
 	
 	Puntos=0
+	ListP = []
 	
 	print ("\n\n\t Escaner de Puertos.")
 			
@@ -29,7 +30,7 @@ def Escaner():
 		Sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		
 		if Sock.connect_ex((Ip, Puerto[x])):
-
+			
 			if Puerto[x] == 53 or Puerto[x] == 67 or Puerto[x] == 68 or Puerto[x] == 69\
 			or Puerto[x] == 123 or Puerto[x] == 161 or Puerto[x] == 162 or Puerto[x] == 500\
 			or Puerto[x] == 514 or Puerto[x] == 520:
@@ -40,21 +41,28 @@ def Escaner():
 				print("\t [X] El Puerto " + str(Puerto[x]) + "/betocp Está Cerrado.")
 			
 			else:
-				print("\t [X] El Puerto " + str(Puerto[x]) + "/tcp Está cerrado.")
+				print("\t [X] El Puerto " + str(Puerto[x]) + "/tcp Está Cerrado.")
 
 		else:
 			if Puerto[x] == 53 or Puerto[x] == 67 or Puerto[x] == 68 or Puerto[x] == 69 or Puerto[x] == 123\
 			or Puerto[x] == 161 or Puerto[x] == 500 or Puerto[x] == 514 or Puerto[x] == 520:
 				
 				print("\n [+] El Puerto " + str(Puerto[x]) + "/udp Está Abierto.\n")
-			
+				ListP.append(str(Puerto[x]))
+				
 			elif(Puerto[x] == 43):
 				print("\n [+] El Puerto " + str(Puerto[x]) + "/betocp Está Abierto.\n")
-			
+				ListP.append(str(Puerto[x]))
+				
 			else:
 				print("\n [+] El Puerto " + str(Puerto[x]) + "/tcp Está Abierto.\n")
+				ListP.append(str(Puerto[x]))
 				
-	print ("\n\n [*] Escaneados " + str(Tam) + " Puertos.")
+	print ("\n\n [*] Escaneados " + str(Tam) + " Puertos.\n\n")
+	
+	for P in ListP:
+		
+		print("\n\t [+] Puerto " + P + " Abierto.")
 
 
 Escaner()
