@@ -6,6 +6,14 @@ import socket
 import time
 import os
 
+
+def Salir(Num=0):
+	try:
+		time.sleep(1)
+		exit(Num)
+	except KeyboardInterrupt:
+		Salir(Num)
+
 def Escaner():
 	
 	Puntos=0
@@ -13,7 +21,11 @@ def Escaner():
 	
 	print ("\n\n\t Escaner de Puertos.")
 	
-	Ip = input("\n\n\t IP: ")
+	try:
+		Ip = input("\n\n\t IP: ")
+	
+	except KeyboardInterrupt:
+		Salir(0)
 	
 	print("\n\n\n\n")
 
@@ -65,8 +77,7 @@ def Escaner():
 	except KeyboardInterrupt:
 		os.system("Title Cancelando...")
 		print("\n\n\t\t Cancelando...\n\n")
-		time.sleep(3)
-		exit(0)
+		Salir(0)
 	
 	
 	print ("\n\n [*] Escaneados " + str(Tam) + " Puertos.\n\n")
