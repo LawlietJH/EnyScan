@@ -1,10 +1,11 @@
 # Python 3
 # By: LawlietJH
-# 		v1.0.7
+# 		v1.0.8
 import keyboard
 import socket
 import time
 import os
+
 
 
 def Salir(Num=0):
@@ -13,6 +14,8 @@ def Salir(Num=0):
 		exit(Num)
 	except KeyboardInterrupt:
 		Salir(Num)
+
+
 
 def Escaner():
 	
@@ -85,7 +88,24 @@ def Escaner():
 	
 	print ("\n\n [*] Escaneados " + str(Tam) + " Puertos.\n\n")
 	
+
+
+def Get_Puertos_Abiertos():
 	
+	if ListP == []:
+		
+		print("\n\t No Hay Puertos.")
+		
+	else:
+		
+		for P in ListP:
+			
+			print("\n\t [+] Puerto " + P)
+
+
+
+def Ver_Puertos_Abiertos():
+
 	print("\n\n\n Presiona Un Comando:\n")
 	print("\t 'L' \t - Ver Lista de Puertos Abiertos.")
 	print("\t 'Esc' \t\t - Salir.")
@@ -101,9 +121,7 @@ def Escaner():
 				
 				print("\n\n [*] Puertos Abiertos: \n\n")
 				
-				for P in ListP:
-				
-					print("\n\t [+] Puerto " + P)
+				Get_Puertos_Abiertos()
 				
 				break
 				
@@ -123,6 +141,7 @@ ListP = []
 def main():
 	
 	Escaner()
+	Ver_Puertos_Abiertos()
 	
 
 main()
