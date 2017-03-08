@@ -1,7 +1,10 @@
 # Python 3
 # By: LawlietJH
 # 		v1.0.6
+import keyboard
 import socket
+import time
+import os
 
 def Escaner():
 	
@@ -70,21 +73,25 @@ def Escaner():
 	
 	while Entry and Ctrl_Z:
 		
-		if keyboard.is_pressed('Ctrl+Z'):
+		try:
+			if keyboard.is_pressed('Ctrl+Z'):
+			
+				os.system("cls && Title Puertos Abiertos en la IP: "+Ip)
+			
+				for P in ListP:
+				
+					print("\n\t [+] Puerto " + P + " Abierto.")
+				
+				Ctrl_Z = False
+				
+			elif keyboard.is_pressed('Esc'):
+				
+				Entry = False
+			
+			else: pass
 		
-			os.system("cls && Title Puertos Abiertos en la IP: "+Ip)
-		
-			for P in ListP:
-			
-				print("\n\t [+] Puerto " + P + " Abierto.")
-			
-			Ctrl_Z = False
-			
-		elif keyboard.is_pressed('Esc'):
-			
-			Entry = False
-		
-		else: pass
+		except:
+			pass
 	
 
 Escaner()
