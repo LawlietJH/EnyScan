@@ -1,6 +1,6 @@
 # Python 3
 # By: LawlietJH
-# 		v1.0.5
+# 		v1.0.6
 import socket
 
 def Escaner():
@@ -60,9 +60,31 @@ def Escaner():
 				
 	print ("\n\n [*] Escaneados " + str(Tam) + " Puertos.\n\n")
 	
-	for P in ListP:
+	print("\n\n Presiona Un Comando:\n")
+	print("\t 'Ctrl + Z' \t - Ver Lista de Puertos Abiertos.")
+	print("\t 'Esc' \t\t - Salir.")
+	
+	
+	Entry = True
+	Ctrl_Z = True
+	
+	while Entry and Ctrl_Z:
 		
-		print("\n\t [+] Puerto " + P + " Abierto.")
-
+		if keyboard.is_pressed('Ctrl+Z'):
+		
+			os.system("cls && Title Puertos Abiertos en la IP: "+Ip)
+		
+			for P in ListP:
+			
+				print("\n\t [+] Puerto " + P + " Abierto.")
+			
+			Ctrl_Z = False
+			
+		elif keyboard.is_pressed('Esc'):
+			
+			Entry = False
+		
+		else: pass
+	
 
 Escaner()
