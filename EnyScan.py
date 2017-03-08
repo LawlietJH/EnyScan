@@ -16,8 +16,9 @@ def Salir(Num=0):
 
 def Escaner():
 	
+	global Ip
+	global ListP
 	Puntos=0
-	ListP = []
 	
 	print ("\n\n\t Escaner de Puertos.")
 	
@@ -38,6 +39,8 @@ def Escaner():
 			372, 389, 427, 434, 435, 443, 444, 445, 465, 500, 512, 513,\
 			514, 515, 520, 587, 591, 631, 666, 690, 993, 995, 1080, 1337]
 			
+	#~ Para pruebas
+	#~ Puerto =[1,7,9,135,139]
 			
 	Tam = len(Puerto)
 	try:
@@ -84,17 +87,15 @@ def Escaner():
 	
 	
 	print("\n\n\n Presiona Un Comando:\n")
-	print("\t 'Ctrl + Z' \t - Ver Lista de Puertos Abiertos.")
+	print("\t 'L' \t - Ver Lista de Puertos Abiertos.")
 	print("\t 'Esc' \t\t - Salir.")
 	
 	
-	Entry = True
-	Ctrl_Z = True
-	
-	while Entry and Ctrl_Z:
+	while True:
 		
 		try:
-			if keyboard.is_pressed('Ctrl+Z'):
+			
+			if keyboard.is_pressed('L'):
 			
 				os.system("cls && Title Puertos Abiertos en la IP: "+Ip)
 				
@@ -104,17 +105,24 @@ def Escaner():
 				
 					print("\n\t [+] Puerto " + P)
 				
-				Ctrl_Z = False
+				break
 				
 			elif keyboard.is_pressed('Esc'):
 				
-				Entry = False
+				break
 			
 			else:
 				pass
 		
 		except:
 			pass
+
+Ip = ""
+ListP = []
+	
+def main():
+	
+	Escaner()
 	
 
-Escaner()
+main()
