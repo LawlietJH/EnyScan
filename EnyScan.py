@@ -33,7 +33,6 @@ def Chk_Dep():
 	except Exception as ex:
 		print( type(ex).__name__ )		#Ver cuando ocurre un error y poder añadirlo a las ecepciones, y no cierre el programa.
 
-
 Chk_Dep()				#~ Se instala el módulo pytube si esta no esta instalada.
 import keyboard 		#~ Se importa la módulo.
 
@@ -245,21 +244,34 @@ def Ecanear_Red():
 	while True:
 		
 		try:
+			print("\n\n\t\t Ejemplo: 192.168.1.0/24 o 192.168.1\n")
+
 			Ip = input("\n\n\t [+] Coloca la IP Base de Red: ")
-		
-			Ip_Separada = Ip.split(".")
-			Red = Ip_Separada[0] + "." +\
-				  Ip_Separada[1] + "." +\
-				  Ip_Separada[2] + "."
-			Inicio = int(input("\n\n Subred Inicio: "))
-			Fin = int(input("\n\n Subred Fin: "))
 			
-			if Inicio > Fin:
+			if "/24" in Ip:
+				ALL = True
 				
-				Aux = Inicio
-				Inicio = Fin
-				Fin = Aux
+				Ip = Ip.replace("/24","")
+				Ip_Separada = Ip.split(".")
+				Red = Ip_Separada[0] + "." +\
+					  Ip_Separada[1] + "." +\
+					  Ip_Separada[2] + "."
+				Inicio = 2
+				Fin = 254
+			else:
+				Ip_Separada = Ip.split(".")
+				Red = Ip_Separada[0] + "." +\
+					  Ip_Separada[1] + "." +\
+					  Ip_Separada[2] + "."
+				Inicio = int(input("\n\n Subred Inicio: "))
+				Fin = int(input("\n\n Subred Fin: "))
 			
+				if Inicio > Fin:
+					
+					Aux = Inicio
+					Inicio = Fin
+					Fin = Aux
+				
 			break
 			
 		except KeyboardInterrupt:
