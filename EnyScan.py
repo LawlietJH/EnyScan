@@ -8,7 +8,7 @@
 #     ███████╗██║ ╚████║   ██║   ███████║╚██████╗██║  ██║██║ ╚████║
 #     ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝
 #                                                         By: LawlietJH
-#                                                               v1.1.2
+#                                                               v1.1.3
 
 import keyboard
 import socket
@@ -18,7 +18,7 @@ import os
 
 
 Autor = "LawlietJH"
-Version = "v1.1.2"
+Version = "v1.1.3"
 
 
 
@@ -139,6 +139,20 @@ def Get_Puertos_Abiertos():
 
 
 
+def Get_Servidores_Activos():
+	
+	if ListR == []:
+		
+		print("\n\t No Hosts Activos.")
+		
+	else:
+		
+		for R in ListR:
+			
+			print("\n\t [+] Host " + R)
+
+
+
 def Ver_Puertos_Abiertos():
 
 	print("\n\n\n Presiona Un Comando:\n")
@@ -173,7 +187,43 @@ def Ver_Puertos_Abiertos():
 
 
 
+def Ver_Servidores_Activos():
+
+	print("\n\n\n Presiona Un Comando:\n")
+	print("\t 'L' \t - Ver Lista de Servidores Activos.")
+	print("\t 'Esc' \t\t - Salir.")
+	
+	
+	while True:
+		
+		try:
+			
+			if keyboard.is_pressed('L'):
+			
+				os.system("cls && Title Puertos Abiertos en la Red: ")
+				
+				print("\n\n [*] Servidores Activos: \n\n")
+				
+				Get_Servidores_Activos()
+				
+				break
+				
+			elif keyboard.is_pressed('Esc'):
+				
+				break
+			
+			else:
+				pass
+		
+		except:
+			pass
+
+
+
+
 def Ecanear_Red():
+	
+	global ListR
 	
 	while True:
 		
@@ -186,6 +236,13 @@ def Ecanear_Red():
 				  Ip_Separada[2] + "."
 			Inicio = int(input("\n\n Subred Inicio: "))
 			Fin = int(input("\n\n Subred Fin: "))
+			
+			if Inicio > Fin:
+				
+				Aux = Inicio
+				Inicio = Fin
+				Fin = Aux
+			
 			break
 			
 		except KeyboardInterrupt:
@@ -196,7 +253,7 @@ def Ecanear_Red():
 		except:
 			print("\n\n\t [!] Ip No Valida.")
 
-	ping = "ping -n 1"
+	ping = "ping -n 1 "
 
 	print("\n\n\t [*] Scaneando Servidores Desde", Red +
 		str(Inicio), "a", Red + str(Fin), "\n\n")
@@ -205,13 +262,14 @@ def Ecanear_Red():
 		
 		Activo = False
 		Direccion = Red + str(Sub_Red)
-		Respuesta = os.popen(ping + " " + Direccion)
+		Respuesta = os.popen(ping + Direccion)
 		
 		for Linea in Respuesta.readlines():
 			
 			if "ttl" in Linea.lower():
 				
 				print("\n    [+]", Direccion, "Activo.\n")
+				ListR.append(Direccion)
 				Activo = True
 				break
 		
@@ -250,6 +308,7 @@ def Menu_Opciones():
 				os.system("cls && Title Analizar Red")
 				
 				Ecanear_Red()
+				Ver_Servidores_Activos()
 				
 				break
 				
@@ -266,6 +325,7 @@ def Menu_Opciones():
 
 Ip = ""
 ListP = []
+ListR = []
 
 
 	
