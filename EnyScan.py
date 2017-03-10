@@ -10,7 +10,6 @@
 #                                                         By: LawlietJH
 #                                                               v1.1.3
 
-import keyboard
 import socket
 import time
 import os
@@ -19,6 +18,24 @@ import os
 
 Autor = "LawlietJH"
 Version = "v1.1.3"
+
+
+
+def Chk_Dep():
+	
+	try:
+		import keyboard
+		
+	except ModuleNotFoundError:
+		print("\n\n\t[!] Instalando Dependencias...\n\n\t\t")
+		os.system("Title Instalando Keyboard && pip install keyboard > Nul && cls && Title EnyScan.py            By: LawlietJH")
+		
+	except Exception as ex:
+		print( type(ex).__name__ )		#Ver cuando ocurre un error y poder añadirlo a las ecepciones, y no cierre el programa.
+
+
+Chk_Dep()				#~ Se instala el módulo pytube si esta no esta instalada.
+import keyboard 		#~ Se importa la módulo.
 
 
 
