@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 # Python 3
 #                                                                  
-#                                                                  
 #     ███████╗███╗   ██╗██╗   ██╗███████╗ ██████╗ █████╗ ███╗   ██╗
 #     ██╔════╝████╗  ██║╚██╗ ██╔╝██╔════╝██╔════╝██╔══██╗████╗  ██║
 #     █████╗  ██╔██╗ ██║ ╚████╔╝ ███████╗██║     ███████║██╔██╗ ██║
 #     ██╔══╝  ██║╚██╗██║  ╚██╔╝  ╚════██║██║     ██╔══██║██║╚██╗██║
 #     ███████╗██║ ╚████║   ██║   ███████║╚██████╗██║  ██║██║ ╚████║
 #     ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝
-#                                                                  
 #                                                         By: LawlietJH
-#                                                               v1.1.0
+#                                                               v1.1.2
 
 import keyboard
 import socket
@@ -20,7 +18,7 @@ import os
 
 
 Autor = "LawlietJH"
-Version = "v1.1.0"
+Version = "v1.1.2"
 
 
 
@@ -30,6 +28,8 @@ def Salir(Num=0):
 		exit(Num)
 	except KeyboardInterrupt:
 		Salir(Num)
+
+
 
 def Set_IP():
 	
@@ -55,9 +55,8 @@ def Set_IP():
 	
 	except KeyboardInterrupt:
 		Salir(0)
-		
-	
-	
+
+
 
 def Escaner():
 	
@@ -123,7 +122,7 @@ def Escaner():
 	
 	
 	print ("\n\n [*] Escaneados " + str(Tam) + " Puertos.\n\n")
-	
+
 
 
 def Get_Puertos_Abiertos():
@@ -171,13 +170,108 @@ def Ver_Puertos_Abiertos():
 		except:
 			pass
 
+
+
+
+def Ecanear_Red():
+	
+	while True:
+		
+		try:
+			Ip = input("\n\n\t [+] Coloca la IP Base de Red: ")
+		
+			Ip_Separada = Ip.split(".")
+			Red = Ip_Separada[0] + "." +\
+				  Ip_Separada[1] + "." +\
+				  Ip_Separada[2] + "."
+			Inicio = int(input("\n\n Subred Inicio: "))
+			Fin = int(input("\n\n Subred Fin: "))
+			break
+			
+		except KeyboardInterrupt:
+			print("\n\n\t [!] Cancelando!...\n\n")
+			time.sleep(2)
+			Salir(0)
+		
+		except:
+			print("\n\n\t [!] Ip No Valida.")
+
+	ping = "ping -n 1"
+
+	print("\n\n\t [*] Scaneando Servidores Desde", Red +
+		str(Inicio), "a", Red + str(Fin), "\n\n")
+
+	for Sub_Red in range(Inicio, Fin + 1):
+		
+		Activo = False
+		Direccion = Red + str(Sub_Red)
+		Respuesta = os.popen(ping + " " + Direccion)
+		
+		for Linea in Respuesta.readlines():
+			
+			if "ttl" in Linea.lower():
+				
+				print("\n    [+]", Direccion, "Activo.\n")
+				Activo = True
+				break
+		
+		if not Activo:
+			
+			print("\t [-]", Direccion, "No Esta Activo.")
+
+
+
+
+
+def Menu_Opciones():
+
+
+	while True:
+		try:
+			
+			print("\n\n\n Elige Una Opción.\n")
+			print("\t 1 - Escanear Puertos.")
+			print("\t 2 - Escanear Red.")
+			print("\t 0 - Salir.")
+		
+			xD = int(input("\n\t Elige Una Opción: "))
+				
+			if xD == 1:
+				
+				os.system("cls && Title Analizar Puertos de Un Host")
+				
+				Escaner()
+				Ver_Puertos_Abiertos()
+				
+				break
+				
+			if xD == 2:
+			
+				os.system("cls && Title Analizar Red")
+				
+				Ecanear_Red()
+				
+				break
+				
+			elif xD == 0: Salir(0)
+			
+			else: pass
+		
+		except KeyboardInterrupt: Salir(0)
+			
+		except: pass
+
+
+
+
 Ip = ""
 ListP = []
+
+
 	
 def main():
 	
-	Escaner()
-	Ver_Puertos_Abiertos()
+	Menu_Opciones()
 	
 
 main()
