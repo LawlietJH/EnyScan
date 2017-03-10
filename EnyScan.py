@@ -8,7 +8,7 @@
 #     ███████╗██║ ╚████║   ██║   ███████║╚██████╗██║  ██║██║ ╚████║
 #     ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝
 #                                                         By: LawlietJH
-#                                                               v1.1.5
+#                                                               v1.1.6
 
 import socket
 import time
@@ -17,7 +17,7 @@ import os
 #~ https://www.ciberbyte.com/ciberseguridad/buscar-hosts-vivos-python/
 
 Autor = "LawlietJH"
-Version = "v1.1.5"
+Version = "v1.1.6"
 
 
 
@@ -194,12 +194,15 @@ def Get_Servidores_Activos():
 		
 		print("\n\t No Hosts Activos.")
 		
+		os.system("Pause > Nul")
+		
 	else:
 		
 		for R in ListR:
 			
 			print("\n\t [+] Host " + R)
-
+		
+		os.system("Pause > Nul")
 
 
 def Ver_Puertos_Abiertos():
@@ -242,10 +245,10 @@ def Ver_Servidores_Activos():
 	print("\t 'Esc' \t\t - Salir.")
 	
 	
-	while True:
+	try:
 		
-		try:
-			
+		while True:
+					
 			if keyboard.is_pressed('L'):
 			
 				os.system("cls && Title Puertos Abiertos en la Red: ")
@@ -257,14 +260,16 @@ def Ver_Servidores_Activos():
 				break
 				
 			elif keyboard.is_pressed('Esc'):
-				
 				break
 			
 			else:
 				pass
 		
-		except:
-			pass
+	except KeyboardInterrupt:
+		pass
+		
+	except:
+		pass
 
 
 
@@ -273,6 +278,7 @@ def Ecanear_Subred():
 	
 	global ListR
 	global Ip
+	ListR = []
 	Ip_Ran = ""
 	Ip_Rango = ""
 	Red = ""
@@ -336,10 +342,10 @@ def Ecanear_Subred():
 		print("\n\n\t [*] Scaneando Servidores Desde", Red +
 			str(Inicio), "a", Red + str(Fin), "\n\n")
 
-		for Sub_Red in range(Inicio, Fin + 1):
+		for Subred in range(Inicio, Fin + 1):
 			
 			Activo = False
-			Direccion = Red + str(Sub_Red)
+			Direccion = Red + str(Subred)
 			Respuesta = os.popen(ping + Direccion)
 			
 			for Linea in Respuesta.readlines():
@@ -354,11 +360,9 @@ def Ecanear_Subred():
 			if not Activo:
 				
 				print("\t [-]", Direccion, "No Esta Activo.")
-		
-		
-		
-		Ver_Servidores_Activos()
 	
+		Ver_Servidores_Activos()
+		
 	except KeyboardInterrupt:
 		os.system("Title Cancelando...")
 		print("\n\n\t [!] Cancelando!...\n\n")
@@ -384,7 +388,7 @@ def Menu_Opciones():
 			os.system("cls && Title EnyScan.py           By: LawlietJH")
 			print("\n\n\n Elige Una Opción.\n")
 			print("\t 1 - Escanear Puertos.")
-			print("\t 2 - Escanear Red.")
+			print("\t 2 - Escanear Subred.")
 			print("\t 0 - Salir.")
 		
 			xD = int(input("\n\t Elige Una Opción: "))
