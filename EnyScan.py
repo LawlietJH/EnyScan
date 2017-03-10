@@ -1,10 +1,26 @@
+# -*- coding: utf-8 -*-
 # Python 3
-# By: LawlietJH
-# 		v1.0.8
+#                                                                  
+#                                                                  
+#     ███████╗███╗   ██╗██╗   ██╗███████╗ ██████╗ █████╗ ███╗   ██╗
+#     ██╔════╝████╗  ██║╚██╗ ██╔╝██╔════╝██╔════╝██╔══██╗████╗  ██║
+#     █████╗  ██╔██╗ ██║ ╚████╔╝ ███████╗██║     ███████║██╔██╗ ██║
+#     ██╔══╝  ██║╚██╗██║  ╚██╔╝  ╚════██║██║     ██╔══██║██║╚██╗██║
+#     ███████╗██║ ╚████║   ██║   ███████║╚██████╗██║  ██║██║ ╚████║
+#     ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝
+#                                                                  
+#                                                         By: LawlietJH
+#                                                               v1.1.0
+
 import keyboard
 import socket
 import time
 import os
+
+
+
+Autor = "LawlietJH"
+Version = "v1.1.0"
 
 
 
@@ -15,21 +31,41 @@ def Salir(Num=0):
 	except KeyboardInterrupt:
 		Salir(Num)
 
-
-
-def Escaner():
+def Set_IP():
 	
 	global Ip
-	global ListP
-	Puntos=0
-	
-	print ("\n\n\t Escaner de Puertos.")
+	Puntos = 0
 	
 	try:
-		Ip = input("\n\n\t IP: ")
+		# Validar IP.
+		while(Puntos != 3):
+			
+			Ip = input("\n\n\t IP: ")
+
+			TamIp= len(Ip)
+
+			for x in range (0, TamIp):
+			
+				if (Ip[x] == "."):
+					
+					Puntos = Puntos + 1
+					
+			if(Puntos == 3): break
+			else: print("\n\n\n\t Ip No Válida.")
 	
 	except KeyboardInterrupt:
 		Salir(0)
+		
+	
+	
+
+def Escaner():
+	
+	global ListP
+	
+	print ("\n\n\t Escaner de Puertos.")
+	
+	Set_IP()
 	
 	print("\n\n\n\n")
 
