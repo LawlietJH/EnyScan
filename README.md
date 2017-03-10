@@ -1,5 +1,5 @@
 # EnyScan
-## Escáner de Puertos Con Python.
+## Escáner de Puertos y Servidores Activos En Una Subred Con Python.
 
 - - -
  
@@ -16,7 +16,7 @@
                         ╩═╝┴ ┴└┴┘┴─┘┴└─┘ ┴╚╝╩ ╩
 
 
-                                 v1.1.0
+                                 v1.1.6
 - - -
 
 ### Modo de Uso:
