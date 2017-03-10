@@ -8,16 +8,16 @@
 #     ███████╗██║ ╚████║   ██║   ███████║╚██████╗██║  ██║██║ ╚████║
 #     ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝
 #                                                         By: LawlietJH
-#                                                               v1.1.3
+#                                                               v1.1.5
 
 import socket
 import time
 import os
 
-
+#~ https://www.ciberbyte.com/ciberseguridad/buscar-hosts-vivos-python/
 
 Autor = "LawlietJH"
-Version = "v1.1.3"
+Version = "v1.1.5"
 
 
 
@@ -39,9 +39,10 @@ import keyboard 		#~ Se importa la módulo.
 
 
 def Salir(Num=0):
+	
 	try:
-		time.sleep(1)
 		exit(Num)
+		
 	except KeyboardInterrupt:
 		Salir(Num)
 
@@ -70,7 +71,38 @@ def Set_IP():
 			else: print("\n\n\n\t Ip No Válida.")
 	
 	except KeyboardInterrupt:
+		print("\n\n\t [!] Cancelando!...\n\n")
+		time.sleep(2)
 		Salir(0)
+
+
+def Set_IP_Base():
+	
+	global Ip
+	Puntos = 0
+	
+	# Validar IP.
+	while(Puntos != 3):
+		
+		os.system("cls")
+		
+		print("\n\n\t\t Ejemplo: 192.168.1.0/24 | -r 60/70 192.168.1.0\n")
+		
+		Ip = input("\n\n\t IP Base de Subred: ")
+		
+		TamIp= len(Ip)
+
+		for x in range(0, TamIp):
+		
+			if (Ip[x] == "."):
+				
+				Puntos = Puntos + 1
+				
+		if(Puntos == 3): break
+		else:
+			print("\n\n\n\t Ip No Válida.")
+			time.sleep(1)
+
 
 
 
@@ -133,7 +165,8 @@ def Escaner():
 				
 	except KeyboardInterrupt:
 		os.system("Title Cancelando...")
-		print("\n\n\t\t Cancelando...\n\n")
+		print("\n\n\t [!] Cancelando!...\n\n")
+		time.sleep(2)
 		Salir(0)
 	
 	
@@ -202,7 +235,6 @@ def Ver_Puertos_Abiertos():
 
 
 
-
 def Ver_Servidores_Activos():
 
 	print("\n\n\n Presiona Un Comando:\n")
@@ -237,74 +269,107 @@ def Ver_Servidores_Activos():
 
 
 
-def Ecanear_Red():
+def Ecanear_Subred():
 	
 	global ListR
+	global Ip
+	Ip_Ran = ""
+	Ip_Rango = ""
+	Red = ""
+	Inicio = 0
+	Fin = 0
 	
-	while True:
+	
+	os.system("cls && Title Analizar Subred...")
+	
+	try:
 		
-		try:
-			print("\n\n\t\t Ejemplo: 192.168.1.0/24 o 192.168.1\n")
-
-			Ip = input("\n\n\t [+] Coloca la IP Base de Red: ")
+		while True:
+			
+			Set_IP_Base()
 			
 			if "/24" in Ip:
 				ALL = True
 				
 				Ip = Ip.replace("/24","")
 				Ip_Separada = Ip.split(".")
-				Red = Ip_Separada[0] + "." +\
-					  Ip_Separada[1] + "." +\
-					  Ip_Separada[2] + "."
+				Red = Ip_Separada[0] + "." + Ip_Separada[1] + "." + Ip_Separada[2] + "."
 				Inicio = 2
 				Fin = 254
-			else:
-				Ip_Separada = Ip.split(".")
-				Red = Ip_Separada[0] + "." +\
-					  Ip_Separada[1] + "." +\
-					  Ip_Separada[2] + "."
-				Inicio = int(input("\n\n Subred Inicio: "))
-				Fin = int(input("\n\n Subred Fin: "))
 			
-				if Inicio > Fin:
+			elif "-r" in Ip:
+				
+				if (" / " in Ip or " /" in Ip or "/ " in Ip):
+						
+						print("\n\n\t\t [!] Comando No Valido!")
+						time.sleep(2)
+				else:
+				
+					Ip_R = Ip.split(" ")
 					
-					Aux = Inicio
-					Inicio = Fin
-					Fin = Aux
-				
+					if Ip_R[0] == "-r":
+						
+						Ip_Ran = Ip_R[1]
+						Ip = Ip_R[2]
+						
+						Ip_Rango = Ip_Ran.split("/")
+						
+						Inicio = int(Ip_Rango[0])
+						Fin = int(Ip_Rango[1])
+						
+						Ip_Separada = Ip.split(".")
+						Red = Ip_Separada[0] + "." + Ip_Separada[1] + "." + Ip_Separada[2] + "."
+						
+						if Inicio > Fin:
+							
+							Aux = Inicio
+							Inicio = Fin
+							Fin = Aux
+			
+			else: pass	
 			break
+		
+		# Buscando Hosts Activos
+
+		ping = "ping -n 1 "
+
+		print("\n\n\t [*] Scaneando Servidores Desde", Red +
+			str(Inicio), "a", Red + str(Fin), "\n\n")
+
+		for Sub_Red in range(Inicio, Fin + 1):
 			
-		except KeyboardInterrupt:
-			print("\n\n\t [!] Cancelando!...\n\n")
-			time.sleep(2)
-			Salir(0)
-		
-		except:
-			print("\n\n\t [!] Ip No Valida.")
-
-	ping = "ping -n 1 "
-
-	print("\n\n\t [*] Scaneando Servidores Desde", Red +
-		str(Inicio), "a", Red + str(Fin), "\n\n")
-
-	for Sub_Red in range(Inicio, Fin + 1):
-		
-		Activo = False
-		Direccion = Red + str(Sub_Red)
-		Respuesta = os.popen(ping + Direccion)
-		
-		for Linea in Respuesta.readlines():
+			Activo = False
+			Direccion = Red + str(Sub_Red)
+			Respuesta = os.popen(ping + Direccion)
 			
-			if "ttl" in Linea.lower():
+			for Linea in Respuesta.readlines():
 				
-				print("\n    [+]", Direccion, "Activo.\n")
-				ListR.append(Direccion)
-				Activo = True
-				break
-		
-		if not Activo:
+				if "ttl" in Linea.lower():
+					
+					print("\n    [+]", Direccion, "Activo.\n")
+					ListR.append(Direccion)
+					Activo = True
+					break
 			
-			print("\t [-]", Direccion, "No Esta Activo.")
+			if not Activo:
+				
+				print("\t [-]", Direccion, "No Esta Activo.")
+		
+		
+		
+		Ver_Servidores_Activos()
+	
+	except KeyboardInterrupt:
+		os.system("Title Cancelando...")
+		print("\n\n\t [!] Cancelando!...\n\n")
+		time.sleep(2)
+		
+	
+	except:
+		print("\n\n\t [!] Ip No Valida.")
+		os.system("Title Ip No Valida!")
+		time.sleep(2)
+
 
 
 
@@ -312,10 +377,11 @@ def Ecanear_Red():
 
 def Menu_Opciones():
 
-
-	while True:
-		try:
-			
+	try:
+		
+		while True:
+				
+			os.system("cls && Title EnyScan.py           By: LawlietJH")
 			print("\n\n\n Elige Una Opción.\n")
 			print("\t 1 - Escanear Puertos.")
 			print("\t 2 - Escanear Red.")
@@ -330,24 +396,24 @@ def Menu_Opciones():
 				Escaner()
 				Ver_Puertos_Abiertos()
 				
-				break
-				
 			if xD == 2:
 			
-				os.system("cls && Title Analizar Red")
+				os.system("cls && Title Analizar Subred")
 				
-				Ecanear_Red()
-				Ver_Servidores_Activos()
+				Ecanear_Subred()
 				
+			elif xD == 0:
 				break
-				
-			elif xD == 0: Salir(0)
 			
 			else: pass
 		
-		except KeyboardInterrupt: Salir(0)
-			
-		except: pass
+	except KeyboardInterrupt:
+		os.system("Title Bye Bye...")
+		print("\n\n\t\t\t  [*] Bye Bye...\n\n")
+		time.sleep(2)
+		Salir(0)
+		
+	except: pass
 
 
 
