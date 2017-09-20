@@ -8,16 +8,17 @@
 #     ███████╗██║ ╚████║   ██║   ███████║╚██████╗██║  ██║██║ ╚████║
 #     ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝
 #                                                         By: LawlietJH
-#                                                               v1.1.6
+#                                                               v1.1.8
 
 import socket
 import time
+import re
 import os
 
 #~ https://www.ciberbyte.com/ciberseguridad/buscar-hosts-vivos-python/
 
 Autor = "LawlietJH"
-Version = "v1.1.6"
+Version = "v1.1.8"
 
 
 
@@ -27,6 +28,10 @@ def Chk_Dep():
 		import keyboard
 		
 	except ModuleNotFoundError:
+		print("\n\n\t[!] Instalando Dependencias...\n\n\t\t")
+		os.system("Title Instalando Keyboard && pip install keyboard > Nul && cls && Title EnyScan.py            By: LawlietJH")
+		
+	except ImportError:
 		print("\n\n\t[!] Instalando Dependencias...\n\n\t\t")
 		os.system("Title Instalando Keyboard && pip install keyboard > Nul && cls && Title EnyScan.py            By: LawlietJH")
 		
@@ -62,61 +67,53 @@ def Salir(Num=0):
 
 
 
-def Set_IP():
+def Set_IP(Eny = "P", CadenaIP = "\n\n\t > "):
 	
 	global Ip
-	Puntos = 0
+	xD = False
+	Imp = ""
 	
 	try:
 		# Validar IP.
-		while(Puntos != 3):
+		while(not xD == True):
 			
-			Ip = input("\n\n\t IP: ")
-
-			TamIp= len(Ip)
-
-			for x in range (0, TamIp):
+			xD = True
 			
-				if (Ip[x] == "."):
+			Ip = input(CadenaIP)
+			
+			#~ if Ip == "-h" or Ip == "help" or Ip == "?" or Ip == "/?": Modo_de_Uso()
+			
+			Ip = Ip.replace("abs", "192.168.1.0/24")
+			Ip = Ip.replace("ab", "192.168.1.0")
+			Ip = Ip.replace("b12", "192.168")
+			Ip = Ip.replace("b1", "192")
+			Ip = Ip.replace("b2", "168")
+			Ip = Ip.replace("b3", "1")
+			Ip = Ip.replace("b4", "0")
+			
+			if Eny == "S": Imp = Ip.split(" ")[-1].replace("/24", "").strip()
+			elif Eny == "P": Imp = Ip
+			
+			Patron = "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
+				
+			if re.search(Patron, Imp):
+				
+				Byte = Imp.split(".")
+				
+				for x in range(4):
 					
-					Puntos = Puntos + 1
-					
-			if(Puntos == 3): break
-			else: print("\n\n\n\t Ip No Válida.")
+					if (int(Byte[x]) < 0 or (int(Byte[x])) > 255): xD = False
+				
+			else: xD = False
+			
+			if xD: break
+			else: print("\n\n\n\t Ip No Válida."), time.sleep(1)
 	
 	except KeyboardInterrupt:
 		print("\n\n\t [!] Cancelando!...\n\n")
 		time.sleep(2)
 		Salir(0)
-
-
-def Set_IP_Base():
-	
-	global Ip
-	Puntos = 0
-	
-	# Validar IP.
-	while(Puntos != 3):
-		
-		os.system("cls")
-		
-		print("\n\n\t\t Ejemplo: 192.168.1.0/24 | -r 60/70 192.168.1.0\n")
-		
-		Ip = input("\n\n\t IP Base de Subred: ")
-		
-		TamIp= len(Ip)
-
-		for x in range(0, TamIp):
-		
-			if (Ip[x] == "."):
-				
-				Puntos = Puntos + 1
-				
-		if(Puntos == 3): break
-		else:
-			print("\n\n\n\t Ip No Válida.")
-			time.sleep(1)
-
+	except: print("Error")
 
 
 
@@ -126,7 +123,9 @@ def Escaner():
 	
 	print ("\n\n\t Escaner de Puertos.")
 	
-	Set_IP()
+	Set_IP("P")
+	
+	print("\n\t IP: " + Ip)
 	
 	print("\n\n\n\n")
 
@@ -299,14 +298,17 @@ def Ecanear_Subred():
 	Inicio = 0
 	Fin = 0
 	
-	
 	os.system("cls && Title Analizar Subred...")
 	
 	try:
 		
 		while True:
 			
-			Set_IP_Base()
+			os.system("cls")
+			
+			print("\n\n\t\t Ejemplo: 192.168.1.0/24 | -r 60/70 192.168.1.0\n")
+			
+			Set_IP("S")
 			
 			if "/24" in Ip:
 				ALL = True
@@ -314,8 +316,9 @@ def Ecanear_Subred():
 				Ip = Ip.replace("/24","")
 				Ip_Separada = Ip.split(".")
 				Red = Ip_Separada[0] + "." + Ip_Separada[1] + "." + Ip_Separada[2] + "."
-				Inicio = 2
-				Fin = 254
+				
+				Inicio = 0
+				Fin = 255
 			
 			elif "-r" in Ip:
 				
@@ -353,8 +356,8 @@ def Ecanear_Subred():
 
 		ping = "ping -n 1 "
 
-		print("\n\n\t [*] Scaneando Servidores Desde", Red +
-			str(Inicio), "a", Red + str(Fin), "\n\n")
+		print("\n\n\t [*] Scaneando Servidores Desde " + Red +
+			str(Inicio) + " a " + Red + str(Fin) + "\n\n")
 
 		for Subred in range(Inicio, Fin + 1):
 			
