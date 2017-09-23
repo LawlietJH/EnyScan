@@ -8,7 +8,7 @@
 #     ███████╗██║ ╚████║   ██║   ███████║╚██████╗██║  ██║██║ ╚████║
 #     ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝
 #                                                         By: LawlietJH
-#                                                         GUI - v1.2.6
+#                                                         GUI - v1.3.2
 # http://patorjk.com/software/taag/#p=display&f=ANSI%20Shadow&t=EnyScan
 
 from tkinter import *
@@ -21,7 +21,7 @@ import os
 
 
 
-Version = "v1.2.6"
+Version = "v1.3.2"
 
 
 
@@ -29,15 +29,17 @@ Version = "v1.2.6"
 
 
 
+IP = ""
 Eny = True
 Cont = 0
-#~ Puerto = [ x for x in range(1,65536) ]
-Puerto = [ x for x in range(1,6553) ]
-Host = [ x for x in range(1,256) ]
+Comando = ""
+Puerto = [ x for x in range(1,65536) ]
+#~ Puerto = [ x for x in range(1,6553) ]
+Host = [ x for x in range(0,255) ]
 Tam = len(Puerto)
 TamH = len(Host)
 Inicio = 0
-Fin = 0
+Final = 0
 
 
 def EscanerThread(x, IP, win):
@@ -59,7 +61,6 @@ def EscanerThread(x, IP, win):
 		
 		root.update_idletasks()
 	
-	
 	if x == Tam-1:
 		
 		e3 = Label(win, text="Escaneo Finalizado.",\
@@ -71,9 +72,12 @@ def EscanerThread(x, IP, win):
 
 
 
-def Hosts(Subred, IP, win, Activo, Red, ping):
+def Hosts(Subred, Fr, win, Activo, Red, ping):
 	
+	global Comando
 	global Cont
+	global IP
+	global Final
 	
 	Activo = False
 	Direccion = Red + str(Subred)
@@ -96,10 +100,24 @@ def Hosts(Subred, IP, win, Activo, Red, ping):
 			
 			Activo = True
 			break
-		
-		else: pass
 
-	if Subred == TamH-1:
+	if Subred == Final:
+		
+		time.sleep(4)
+		# Host Activos...
+		
+		Texto3.delete(0,100)
+		Texto3.insert(0, str(Cont)+" Host Activos de "+str(TamH)+" Escaneados.")
+	
+		Texto2.delete(0,100)
+		Texto2.insert(0, str(Comando))
+		
+		e3 = Label(win, text="Host Activos: "+str(Cont),\
+					font="Calibri 10 bold", \
+					bg="cadetblue", fg="white", anchor=W, justify=LEFT, bd=0,\
+					highlightbackground="#1E6FBA", highlightcolor="red",\
+					highlightthickness=1)
+		e3.pack(padx=5,pady=0,ipadx=5,ipady=5,fill=X)
 		
 		e3 = Label(win, text="Escaneo Finalizado.",\
 				font="Calibri 10 bold", \
@@ -107,6 +125,10 @@ def Hosts(Subred, IP, win, Activo, Red, ping):
 				highlightbackground="#1E6FBA", highlightcolor="red",\
 				highlightthickness=1)
 		e3.pack(padx=5,pady=10,ipadx=5,ipady=5,fill=X)
+		
+		root.update_idletasks()
+		
+		Cont = 0
 
 
 
@@ -122,19 +144,29 @@ def Puertos(Fr): # Función que obtiene los Puertos Abiertos de una IP.
 	
 	global TamH
 	global Cont
+	global Comando
 	global Eny
 	global Inicio
-	global Fin
+	global Final
+	global IP
 	
+	Inicio = 0
+	Final = 0
 	TamH = len(Host)
 	Cont = 0
 	Eny = True
 	Elaine = False
 	
-	IP = Texto1.get()
+	IP = Texto1.get().strip()
+	Comando = IP
 	
 	# Validar IP.
 	try:
+		
+		IP = IP.replace("abs", "192.168.1.0/24")
+		IP = IP.replace("ab", "192.168.1.0")
+		IP = IP.replace("bs", "192.168")
+		Comando = IP
 		
 		if IP == "":
 			
@@ -147,15 +179,44 @@ def Puertos(Fr): # Función que obtiene los Puertos Abiertos de una IP.
 			root.update_idletasks()
 			return
 		
-		IP = IP.replace("abs", "192.168.1.0/24")
-		IP = IP.replace("ab", "192.168.1.0")
-		IP = IP.replace("bs", "192.168")
-		
-		if IP.endswith("/24") or IP.startswith("-r") :
+		if IP.endswith("/24") and IP.startswith("-r") :
+			
+			Texto2.delete(0,100)
+			Texto2.insert(0,"El Comando Es Invalido.")
+			
+			Texto3.delete(0,100)
+			Texto3.insert(0,"Usa [ -r ] y [ /24 ] por separado .")
+			
+			root.update_idletasks()
+			return
+		#~ print(re.search(" */?2?4? *[0-9\.]+ */? *2?4?", IP))
+		if IP.endswith("/24") or IP.startswith("-r") or "/24" in IP or "-r" in IP:
+			
+			if IP.startswith("-r") and len(IP.split(" ")) != 3:
+
+					Texto2.delete(0,100)
+					Texto2.insert(0,"El Comando Es Invalido.")
+					
+					Texto3.delete(0,100)
+					Texto3.insert(0,"Usa [ -r 80/100 192.168.1.0 ] separando correctamente.")
+					
+					root.update_idletasks()
+					return
+					
+			if IP.endswith("/24") and len(IP.split(" ")) != 1:
+
+					Texto2.delete(0,100)
+					Texto2.insert(0,"El Comando Es Invalido.")
+					
+					Texto3.delete(0,100)
+					Texto3.insert(0,"Usa [ 192.168.1.0/24 ] todo junto.")
+					
+					root.update_idletasks()
+					return
 			
 			Elaine = True
 			Imp = IP.split(" ")[-1].replace("/24", "").strip()
-		
+			
 		else: Imp = IP
 		
 		Patron = "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
@@ -171,7 +232,7 @@ def Puertos(Fr): # Función que obtiene los Puertos Abiertos de una IP.
 			if Eny == False:
 				
 				Texto2.delete(0,100)
-				Texto2.insert(0,"IP No Valida...")
+				Texto2.insert(0,"IP No Valida... Fuera de Rango [ 0/255 ]")
 				
 				Texto3.delete(0,100)
 				Texto3.insert(0,str(IP))
@@ -181,7 +242,7 @@ def Puertos(Fr): # Función que obtiene los Puertos Abiertos de una IP.
 		else:
 			
 			Texto2.delete(0,100)
-			Texto2.insert(0,"IP No Valida...")
+			Texto2.insert(0,"Comando No Valido...")
 			
 			Texto3.delete(0,100)
 			Texto3.insert(0,str(IP))
@@ -207,8 +268,9 @@ def Puertos(Fr): # Función que obtiene los Puertos Abiertos de una IP.
 	
 	if Elaine == True: #=======================================================================================
 		
-		Inicio = 0
-		Final = 0
+		Et4.config(text="Comando: ")
+		Et5.config(text="Host: ")
+		
 		Aux = 0
 			
 		if IP.endswith("/24"):
@@ -218,11 +280,12 @@ def Puertos(Fr): # Función que obtiene los Puertos Abiertos de una IP.
 			Red = Ip_Separada[0] + "." + Ip_Separada[1] + "." + Ip_Separada[2] + "."
 			
 			Inicio = 0
-			Fin = 255
+			Final = 255
+			
 		
-		elif "-r" in Ip:
+		elif IP.startswith("-r"):
 				
-			if (" / " in Ip or " /" in Ip or "/ " in Ip):
+			if (" / " in IP or " /" in IP or "/ " in IP):
 					
 					Texto3.delete(0,100)
 					Texto3.insert(0,"Comando No Valido...")
@@ -233,35 +296,35 @@ def Puertos(Fr): # Función que obtiene los Puertos Abiertos de una IP.
 					root.update_idletasks()
 					return
 			else:
-				IP2 = ""
+				
 				Ip_R = IP.split(" ")
 				
 				if Ip_R[0] == "-r":
 					
 					Ip_Ran = Ip_R[1]
-					IP2 = Ip_R[2]
+					IP = Ip_R[2]
 					
 					Ip_Rango = Ip_Ran.split("/")
 					
 					Inicio = int(Ip_Rango[0])
-					Fin = int(Ip_Rango[1])
+					Final = int(Ip_Rango[1])
 					
-					Ip_Separada = IP2.split(".")
+					Ip_Separada = IP.split(".")
 					Red = Ip_Separada[0] + "." + Ip_Separada[1] + "." + Ip_Separada[2] + "."
 					
-					if Inicio > Fin:
+					if Inicio > Final:
 						
 						Aux = Inicio
-						Inicio = Fin
-						Fin = Aux
+						Inicio = Final
+						Final = Aux
 					
 					if (Inicio < 0 or Inicio > 255) or (Final < 0 or Final > 255):
 						
 						Texto3.delete(0,100)
-						Texto3.insert(0,"Comando No Valido...")
+						Texto3.insert(0,"Comando Incorrecto... Estas Fuera del Rango [ 0/255 ]")
 						
 						Texto2.delete(0,100)
-						Texto2.insert(0,str(IP))
+						Texto2.insert(0,str(Comando))
 						
 						root.update_idletasks()
 						return
@@ -286,7 +349,7 @@ def Puertos(Fr): # Función que obtiene los Puertos Abiertos de una IP.
 		winH = win.winfo_screenheight() # - h
 		win.geometry("280x600%+d%+d" % (int((winW*1.5)/2),int(winH/13)))
 		win.config(relief="sunken", bd=5, background="cadetblue")
-		win.title("Host: " + str(IP))
+		win.title("Host: " + str(Comando))
 		win.iconbitmap("Imagenes\LawlietJH.ico")
 			
 		win.update_idletasks()
@@ -306,7 +369,7 @@ def Puertos(Fr): # Función que obtiene los Puertos Abiertos de una IP.
 		
 		Texto2.delete(0,100)
 		Texto2.configure(background="dark turquoise", fg="darkBlue",)
-		Texto2.insert(0,"Escaneando Host en el Rango: " + str(IP) + "/24")
+		Texto2.insert(0,"Escaneando Host en el Rango: " + str(Comando))
 		
 		# Escribe Información en Ventana Secundaria.
 		e3 = Label(win, text="Escaneando Subred...",\
@@ -327,32 +390,14 @@ def Puertos(Fr): # Función que obtiene los Puertos Abiertos de una IP.
 		
 		# Crea Los Hilos Necesarios De Ejecuación.
 		
-		for x in range(Inicio, Fin + 1):
+		for x in range(Inicio, Final + 1):
 			
 			root.update_idletasks()
-			threading.Thread(target=Hosts, args=(x, IP, win, Activo, Red, ping)).start()
+			threading.Thread(target=Hosts, args=(x, Fr, win, Activo, Red, ping)).start()
 		
 		root.update_idletasks()
 		
-		time.sleep(10)
-		# Host Activos...
-		
-		Texto3.delete(0,100)
-		Texto3.insert(0, str(Cont)+" Host Ativos de "+str(TamH)+" Escaneados.")
-	
-		Texto2.delete(0,100)
-		Texto2.insert(0, str(IP))
-		
-		e3 = Label(win, text="Host Ativos: "+str(Cont),\
-					font="Calibri 10 bold", \
-					bg="cadetblue", fg="white", anchor=W, justify=LEFT, bd=0,\
-					highlightbackground="#1E6FBA", highlightcolor="red",\
-					highlightthickness=1)
-		e3.pack(padx=5,pady=0,ipadx=5,ipady=5,fill=X)
-		
-		Cont = 0
-		
-		root.update_idletasks()
+		#~ time.sleep(5)
 		
 		#~ FechaF = time.strftime("[!] Finalizado: %d/%m/%Y %H:%M:%S")
 		
@@ -369,7 +414,7 @@ def Puertos(Fr): # Función que obtiene los Puertos Abiertos de una IP.
 		TiempoS = (TiempoSF - TiempoSI) + (TiempoM * 60)
 		
 		# Imprime El Tiempo Transcurrido.
-		e3 = Label(win, text="Duración: "+str(TiempoS)+" segundos",\
+		e3 = Label(win, text="Duración: "+str(TiempoS+4)+" segundos",\
 					font="Calibri 10 bold", \
 					bg="cadetblue", fg="white", anchor=W, justify=LEFT, bd=0,\
 					highlightbackground="#1E6FBA", highlightcolor="red",\
@@ -387,8 +432,12 @@ def Puertos(Fr): # Función que obtiene los Puertos Abiertos de una IP.
 		# Actualiza Toda La Interfaz Grafica.
 		root.update_idletasks()
 		
+		
 	else: #=======================================================================================
-			
+		
+		Et4.config(text="Puertos: ")
+		Et5.config(text="Comando: ")
+		
 		# Buscando Si Esta Activo el Host.
 
 		Respuesta = os.popen(ping + IP)
@@ -587,7 +636,7 @@ if __name__ == "__main__":
 	Et1.grid(row=0, column=0, sticky=E, padx=(5,0), pady=(15,5))
 	
 	# Etiqueta 2:
-	Et2 = Label(Fr, fg="darkblue", text="192.168.1.77    o    192.168.1.0/24")
+	Et2 = Label(Fr, fg="darkblue", text="192.168.1.77    o    192.168.1.0/24    o    -r 60/80 ab")
 	Et2.grid(row=0, column=1, sticky=(W,E), pady=(15,5))
 	Et2.config(font="Calibri 11 bold italic", relief="sunken", background="cadetblue")#, justify="center")
 	
