@@ -8,7 +8,7 @@
 #     ███████╗██║ ╚████║   ██║   ███████║╚██████╗██║  ██║██║ ╚████║
 #     ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝
 #                                                         By: LawlietJH
-#                                                         GUI - v1.2.2
+#                                                         GUI - v1.2.3
 # http://patorjk.com/software/taag/#p=display&f=ANSI%20Shadow&t=EnyScan
 
 from tkinter import *
@@ -21,7 +21,7 @@ import os
 
 
 
-Version = "v1.2.2"
+Version = "v1.2.3"
 
 
 
@@ -29,6 +29,7 @@ Version = "v1.2.2"
 
 
 
+Eny = True
 Cont = 0
 #~ Puerto = [ x for x in range(1,65536) ]
 Puerto = [ x for x in range(1,6553) ]
@@ -80,6 +81,9 @@ def ejecutar(Funcion): root.after(200,Funcion)
 def Puertos(Fr): # Función que obtiene los Puertos Abiertos de una IP.
 	
 	global Cont
+	global Eny
+	
+	Eny = True
 	
 	IP = Texto1.get()
 	
@@ -95,13 +99,15 @@ def Puertos(Fr): # Función que obtiene los Puertos Abiertos de una IP.
 			Texto3.insert(0,"Escribe Una IP.")
 			
 			root.update_idletasks()
-			#~ print("xD")
 			return
-	
+		
 		IP = IP.replace("abs", "192.168.1.0/24")
 		IP = IP.replace("ab", "192.168.1.0")
 		IP = IP.replace("bs", "192.168")
 		
+		elif IP.endswith("/24"): pass
+			#~ print(True)
+			
 		Imp = IP
 		
 		Patron = "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
@@ -112,8 +118,18 @@ def Puertos(Fr): # Función que obtiene los Puertos Abiertos de una IP.
 			
 			for x in range(4):
 				
-				if (int(Byte[x]) < 0 or (int(Byte[x])) > 255): xD = False
+				if (int(Byte[x]) < 0 or (int(Byte[x])) > 255): Eny = False
+			
+			if Eny == False:
 				
+				Texto2.delete(0,100)
+				Texto2.insert(0,"IP No Valida...")
+				
+				Texto3.delete(0,100)
+				Texto3.insert(0,str(IP))
+				
+				root.update_idletasks()
+				return
 		else:
 			
 			Texto2.delete(0,100)
@@ -145,8 +161,6 @@ def Puertos(Fr): # Función que obtiene los Puertos Abiertos de una IP.
 	for Linea in Respuesta.readlines():
 		
 		if "ttl" in Linea.lower():
-			
-			print("\n    [+]", IP, "Activo.\n")
 				
 			Texto2.delete(0,100)
 			Texto2.insert(0,"UP")
