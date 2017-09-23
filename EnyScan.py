@@ -8,17 +8,19 @@
 #     ███████╗██║ ╚████║   ██║   ███████║╚██████╗██║  ██║██║ ╚████║
 #     ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝
 #                                                         By: LawlietJH
-#                                                               v1.1.8
+#                                                               v1.2.0
 
+import threading
 import socket
 import time
+import sys
 import re
 import os
 
 #~ https://www.ciberbyte.com/ciberseguridad/buscar-hosts-vivos-python/
 
 Autor = "LawlietJH"
-Version = "v1.1.8"
+Version = "v1.2.0"
 
 
 
@@ -29,11 +31,11 @@ def Chk_Dep():
 		
 	except ModuleNotFoundError:
 		print("\n\n\t[!] Instalando Dependencias...\n\n\t\t")
-		os.system("Title Instalando Keyboard && pip install keyboard > Nul && cls && Title EnyScan.py            By: LawlietJH")
+		os.system("Title Instalando Keyboard && py -m pip install keyboard > Nul && cls && Title EnyScan.py            By: LawlietJH")
 		
 	except ImportError:
 		print("\n\n\t[!] Instalando Dependencias...\n\n\t\t")
-		os.system("Title Instalando Keyboard && pip install keyboard > Nul && cls && Title EnyScan.py            By: LawlietJH")
+		os.system("Title Instalando Keyboard && py -m pip install keyboard > Nul && cls && Title EnyScan.py            By: LawlietJH")
 		
 	except Exception as ex:
 		print( type(ex).__name__ )		#Ver cuando ocurre un error y poder añadirlo a las ecepciones, y no cierre el programa.
@@ -46,7 +48,7 @@ try:
 except:					# Si Hay Algún Error Significa Que No Se Instaló Correctamente.
 	print("\n\n   No se pudo instalar correctamente el Módulo 'keyboard'.")
 	print("\n   Revise Su Conexión o Instale El Módulo Manualmente Desde Consola Con:")
-	print("\n\t 'pip install keyboard'   o   ' pip3 install keyboard'")
+	print("\n\t 'py -m pip install keyboard'   o   'pip install keyboard'")
 	
 	try:
 		os.system("Pause > Nul")
@@ -60,10 +62,28 @@ except:					# Si Hay Algún Error Significa Que No Se Instaló Correctamente.
 def Salir(Num=0):
 	
 	try:
-		exit(Num)
+		sys.exit(Num)
 		
 	except KeyboardInterrupt:
 		Salir(Num)
+
+
+
+def Modo_De_Uso():
+	
+	os.system("Cls")
+	
+	print("\n\n [+] Modo de Uso:")
+	print("\n\n  abs == 192.168.1.0/24 \t(All Bytes + SubRed)")
+	print("\n  ab  == 192.168.1.0 \t\t(All Bytes)")
+	print("\n  bs  == 192.168 \t\t(Bytes 1 y 2)")
+	print("\n\n [+] Ejemplos:")
+	print("\n\n  192.168.1.0/24 o abs (Escanea Toda la subred)")
+	print("\n  -r 0/99 192.168.1.0 (Escanea entre la subred 192.168.1.0 y 192.168.1.99)")
+	print("\n  -r 60/70 ab (Escanea entre la subred 192.168.1.60 y 192.168.1.70)")
+	
+	os.system("Pause > Nul")
+	
 
 
 
@@ -71,25 +91,29 @@ def Set_IP(Eny = "P", CadenaIP = "\n\n\t > "):
 	
 	global Ip
 	xD = False
+	xD2 = False
 	Imp = ""
 	
 	try:
 		# Validar IP.
-		while(not xD == True):
+		while(xD == False):
 			
 			xD = True
 			
+			if Eny == "S": print("\n\n\t\t Ejemplo: 192.168.1.0/24 | -r 60/70 192.168.1.0\n\n\t\t\t  [ -h | help | ? | /? ]")
+			elif Eny == "P": print ("\n\n\t Escaner de Puertos.")
+			
 			Ip = input(CadenaIP)
 			
-			#~ if Ip == "-h" or Ip == "help" or Ip == "?" or Ip == "/?": Modo_de_Uso()
+			if Ip == "-h" or Ip == "help" or Ip == "?" or Ip == "/?":
+				
+				Modo_De_Uso()
+				os.system("Cls")
+				xD2 = True
 			
 			Ip = Ip.replace("abs", "192.168.1.0/24")
 			Ip = Ip.replace("ab", "192.168.1.0")
-			Ip = Ip.replace("b12", "192.168")
-			Ip = Ip.replace("b1", "192")
-			Ip = Ip.replace("b2", "168")
-			Ip = Ip.replace("b3", "1")
-			Ip = Ip.replace("b4", "0")
+			Ip = Ip.replace("bs", "192.168")
 			
 			if Eny == "S": Imp = Ip.split(" ")[-1].replace("/24", "").strip()
 			elif Eny == "P": Imp = Ip
@@ -107,21 +131,68 @@ def Set_IP(Eny = "P", CadenaIP = "\n\n\t > "):
 			else: xD = False
 			
 			if xD: break
-			else: print("\n\n\n\t Ip No Válida."), time.sleep(1)
+			else: 
+				if xD2: pass
+				else:
+					xD2 = False
+					print("\n\n\n\t Ip No Válida."), time.sleep(1)
 	
 	except KeyboardInterrupt:
 		print("\n\n\t [!] Cancelando!...\n\n")
 		time.sleep(2)
 		Salir(0)
-	except: print("Error")
+		
+	except EOFError:
+		print("\n\n\t [!] Cancelando!...\n\n")
+		time.sleep(2)
+		Salir(0)
+
+
+
+def EscanerThread(x):
+	
+	global ListP
+	
+	Sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	
+	if Sock.connect_ex((Ip, x)):
+		
+		if x == 53 or x == 67 or x == 68 or x == 69\
+		 or x == 123 or x == 161 or x == 162 or x == 500\
+		 or x == 514 or x == 520: pass
+			
+			#~ print("\t [X] El Puerto " + str(x) + "/udp Está Cerrado.")
+		
+		elif(x == 43): pass
+			#~ print("\t [X] El Puerto " + str(x) + "/betocp Está Cerrado.")
+		
+		else: pass
+			#~ print("\t [X] El Puerto " + str(x) + "/tcp Está Cerrado.")
+
+	else:
+		if x == 53 or x == 67 or x == 68 or x == 69 or x == 123\
+		 or x == 137 or x == 138 or x == 161 or x == 192 or x == 500\
+		 or x == 514 or x == 520 or x == 623 or x == 1701 or x == 1900\
+		 or ( x >= 3478 and x <= 3497 ) or x == 4398 or x == 4500\
+		 or x == 5350 or x == 5351 or x == 5353 or x == 5597\
+		 or x == 5898 or x == 6970 or x == 9999 or x == 7070:
+			
+			print(" [+] El Puerto " + str(x) + "/udp Está Abierto.")
+			ListP.append(str(x)+"/udp")
+			
+		elif(x == 43):
+			print(" [+] El Puerto " + str(x) + "/betocp Está Abierto.")
+			ListP.append(str(x)+"/betocp")
+			
+		else:
+			print(" [+] El Puerto " + str(x) + "/tcp Está Abierto.")
+			ListP.append(str(x)+"/tcp")
 
 
 
 def Escaner():
 	
 	global ListP
-	
-	print ("\n\n\t Escaner de Puertos.")
 	
 	Set_IP("P")
 	
@@ -130,13 +201,7 @@ def Escaner():
 	print("\n\n\n\n")
 
 	# Puertos Para Escanear.
-	Puerto = [1, 5, 7, 9, 11, 13, 17, 18, 19, 20, 21, 22, 23, 25, 37,\
-			39, 42, 43, 49, 50, 53, 63, 67, 68, 69, 70, 79, 80, 88, 95,\
-			101, 107, 109, 110, 111, 113, 115, 117, 119, 123, 135, 137,\
-			138, 139, 143, 161, 162, 174, 177, 178, 179, 194, 199, 201,\
-			202, 204, 206, 209, 210, 213, 220, 245, 347, 363, 369, 370,\
-			372, 389, 427, 434, 435, 443, 444, 445, 465, 500, 512, 513,\
-			514, 515, 520, 587, 591, 631, 666, 690, 993, 995, 1080, 1337]
+	Puerto = [ x for x in range(65536)]
 			
 	#~ Para pruebas
 	#~ Puerto =[1,7,9,135,139]
@@ -145,36 +210,8 @@ def Escaner():
 	try:
 		for x in range(0, Tam):
 			
-			Sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-			
-			if Sock.connect_ex((Ip, Puerto[x])):
-				
-				if Puerto[x] == 53 or Puerto[x] == 67 or Puerto[x] == 68 or Puerto[x] == 69\
-				or Puerto[x] == 123 or Puerto[x] == 161 or Puerto[x] == 162 or Puerto[x] == 500\
-				or Puerto[x] == 514 or Puerto[x] == 520:
-					
-					print("\t [X] El Puerto " + str(Puerto[x]) + "/udp Está Cerrado.")
-				
-				elif(Puerto[x] == 43):
-					print("\t [X] El Puerto " + str(Puerto[x]) + "/betocp Está Cerrado.")
-				
-				else:
-					print("\t [X] El Puerto " + str(Puerto[x]) + "/tcp Está Cerrado.")
-
-			else:
-				if Puerto[x] == 53 or Puerto[x] == 67 or Puerto[x] == 68 or Puerto[x] == 69 or Puerto[x] == 123\
-				or Puerto[x] == 161 or Puerto[x] == 500 or Puerto[x] == 514 or Puerto[x] == 520:
-					
-					print("\n [+] El Puerto " + str(Puerto[x]) + "/udp Está Abierto.\n")
-					ListP.append(str(Puerto[x])+"/udp")
-					
-				elif(Puerto[x] == 43):
-					print("\n [+] El Puerto " + str(Puerto[x]) + "/betocp Está Abierto.\n")
-					ListP.append(str(Puerto[x])+"/betocp")
-					
-				else:
-					print("\n [+] El Puerto " + str(Puerto[x]) + "/tcp Está Abierto.\n")
-					ListP.append(str(Puerto[x])+"/tcp")
+			t = threading.Thread(target=EscanerThread, args=(Puerto[x], ))  
+			t.start()
 				
 	except KeyboardInterrupt:
 		os.system("Title Cancelando...")
@@ -306,8 +343,6 @@ def Ecanear_Subred():
 			
 			os.system("cls")
 			
-			print("\n\n\t\t Ejemplo: 192.168.1.0/24 | -r 60/70 192.168.1.0\n")
-			
 			Set_IP("S")
 			
 			if "/24" in Ip:
@@ -415,7 +450,8 @@ def Menu_Opciones():
 				os.system("cls && Title Analizar Puertos de Un Host")
 				
 				Escaner()
-				Ver_Puertos_Abiertos()
+				#~ Ver_Puertos_Abiertos()
+				os.system("Pause > Nul")
 				
 			if xD == 2:
 			
