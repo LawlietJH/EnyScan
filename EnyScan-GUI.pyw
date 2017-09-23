@@ -8,7 +8,7 @@
 #     ███████╗██║ ╚████║   ██║   ███████║╚██████╗██║  ██║██║ ╚████║
 #     ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝
 #                                                         By: LawlietJH
-#                                                         GUI - v1.2.1
+#                                                         GUI - v1.2.2
 # http://patorjk.com/software/taag/#p=display&f=ANSI%20Shadow&t=EnyScan
 
 from tkinter import *
@@ -21,7 +21,7 @@ import os
 
 
 
-Version = "v1.2.1"
+Version = "v1.2.2"
 
 
 
@@ -134,6 +134,40 @@ def Puertos(Fr): # Función que obtiene los Puertos Abiertos de una IP.
 		Texto3.insert(0,"ERROR!")
 		
 		root.update_idletasks()
+		return
+	
+	# Buscando Si Esta Activo el Host.
+	Activo = False
+	ping = "ping -n 1 "
+
+	Respuesta = os.popen(ping + IP)
+	
+	for Linea in Respuesta.readlines():
+		
+		if "ttl" in Linea.lower():
+			
+			print("\n    [+]", IP, "Activo.\n")
+				
+			Texto2.delete(0,100)
+			Texto2.insert(0,"UP")
+			
+			Texto3.delete(0,100)
+			Texto3.insert(0,IP)
+			
+			Activo = True
+			root.update_idletasks()
+			break
+	
+	if not Activo:
+		
+		Texto2.delete(0,100)
+		Texto2.insert(0,"DOWN")
+		
+		Texto3.delete(0,100)
+		Texto3.insert(0,IP)
+	
+		root.update_idletasks()
+		
 		return
 	
 	#Crea Seginda Ventana.
